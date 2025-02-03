@@ -22,6 +22,11 @@ public class SemanticKernelCacheTests : FixturedUnitTest
         _util = Resolve<ISemanticKernelCache>(true);
     }
 
+    [Fact]
+    public void Default()
+    {
+    }
+
     [LocalFact]
     public async ValueTask Get_should_retrieve_kernel()
     {
