@@ -2,7 +2,7 @@
 [![](https://img.shields.io/github/actions/workflow/status/soenneker/soenneker.semantickernel.cache/publish-package.yml?style=for-the-badge)](https://github.com/soenneker/soenneker.semantickernel.cache/actions/workflows/publish-package.yml)
 [![](https://img.shields.io/nuget/dt/Soenneker.SemanticKernel.Cache.svg?style=for-the-badge)](https://www.nuget.org/packages/Soenneker.SemanticKernel.Cache/)
 
-# ![](https://user-images.githubusercontent.com/4441470/224455560-91ed3ee7-f510-4041-a8d2-3fc093025112.png) Soenneker.Utils.SemanticKernelCache
+# ![](https://user-images.githubusercontent.com/4441470/224455560-91ed3ee7-f510-4041-a8d2-3fc093025112.png) Soenneker.SemanticKernel.Cache
 
 ### Providing async thread-safe singleton Semantic Kernel instances
 
@@ -15,7 +15,7 @@ When using `Microsoft.SemanticKernel`, it's recommended to maintain long-lived k
 Install the package via the .NET CLI:
 
 ```bash
-dotnet add package Soenneker.Utils.SemanticKernelCache
+dotnet add package Soenneker.SemanticKernel.Cache
 ```
 
 ## Usage
@@ -25,7 +25,7 @@ dotnet add package Soenneker.Utils.SemanticKernelCache
 In your `Program.cs` (or equivalent startup file), register the cache with the DI container:
 
 ```csharp
-using Soenneker.Utils.SemanticKernelCache;
+using Soenneker.SemanticKernel.Cache;
 
 public static async Task Main(string[] args)
 {
@@ -47,7 +47,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Chat;
-using Soenneker.Utils.SemanticKernelCache;
+using Soenneker.SemanticKernel.Cache;
 
 public class TestClass
 {
