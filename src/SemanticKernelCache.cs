@@ -68,18 +68,19 @@ public class SemanticKernelCache : ISemanticKernelCache
             await options.ConfigureKernelAsync(kernel).NoSync();
     }
 
-    public ValueTask<Kernel> Get(string id, SemanticKernelOptions options, CancellationToken cancellationToken = default)
+    public ValueTask<Kernel> Init(string id, SemanticKernelOptions options, CancellationToken cancellationToken = default)
     {
-        options.ThrowIfNull(nameof(options));
-
         return _kernels.Get(id, cancellationToken, options);
     }
 
-    public Kernel GetSync(string id, SemanticKernelOptions options, CancellationToken cancellationToken = default)
+    public ValueTask<Kernel> Get(string id, SemanticKernelOptions? options, CancellationToken cancellationToken = default)
     {
-        options.ThrowIfNull(nameof(options));
+        return _kernels.Get(id, cancellationToken, options!);
+    }
 
-        return _kernels.GetSync(id, cancellationToken, options);
+    public Kernel GetSync(string id, SemanticKernelOptions? options, CancellationToken cancellationToken = default)
+    {
+        return _kernels.GetSync(id, cancellationToken, options!);
     }
 
     public ValueTask Remove(string id)

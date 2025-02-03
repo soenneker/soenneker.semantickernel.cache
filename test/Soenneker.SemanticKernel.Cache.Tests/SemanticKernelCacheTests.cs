@@ -90,4 +90,31 @@ public class SemanticKernelCacheTests : FixturedUnitTest
 
         result.Should().NotBeNull();
     }
+
+    [LocalFact]
+    public async ValueTask Init_with_null_options_on_Get_should_return_kernel()
+    {
+        var options = new SemanticKernelOptions
+        {
+            ModelId = "deepseek-r1:32b",
+            Endpoint = "http://localhost:11434",
+            ApiKey = "",
+            KernelFactory = (opts, ct) =>
+            {
+                // Create a kernel builder configured for local Ollama.
+#pragma warning disable SKEXP0070
+                IKernelBuilder builder = Kernel.CreateBuilder().AddOllamaChatCompletion(opts.ModelId, new Uri(opts.Endpoint));
+#pragma warning restore
+
+                return ValueTask.FromResult(builder);
+            }
+        };
+
+        Kernel kernel1 = await _util.Init("localOllamaChatTest", options, CancellationToken);
+
+        Kernel kernel2 = await _util.Get("localOllamaChatTest", null, CancellationToken);
+
+        kernel1.Should().NotBeNull();
+        kernel2.Should().NotBeNull();
+    }
 }

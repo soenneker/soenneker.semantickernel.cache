@@ -18,7 +18,16 @@ public interface ISemanticKernelCache : IAsyncDisposable, IDisposable
     /// <param name="options">The options used to configure the kernel instance.</param>
     /// <param name="cancellationToken">A token to observe while waiting for the task to complete.</param>
     /// <returns>A <see cref="ValueTask{TResult}"/> representing the asynchronous operation, returning the requested <see cref="Kernel"/>.</returns>
-    ValueTask<Kernel> Get(string id, SemanticKernelOptions options, CancellationToken cancellationToken = default);
+    ValueTask<Kernel> Init(string id, SemanticKernelOptions options, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Retrieves a <see cref="Kernel"/> instance asynchronously, creating it if necessary.
+    /// </summary>
+    /// <param name="id">The unique identifier of the kernel instance.</param>
+    /// <param name="options">The options used to configure the kernel instance.</param>
+    /// <param name="cancellationToken">A token to observe while waiting for the task to complete.</param>
+    /// <returns>A <see cref="ValueTask{TResult}"/> representing the asynchronous operation, returning the requested <see cref="Kernel"/>.</returns>
+    ValueTask<Kernel> Get(string id, SemanticKernelOptions? options, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Retrieves a <see cref="Kernel"/> instance synchronously, creating it if necessary.
@@ -27,7 +36,7 @@ public interface ISemanticKernelCache : IAsyncDisposable, IDisposable
     /// <param name="options">The options used to configure the kernel instance.</param>
     /// <param name="cancellationToken">A token to observe for cancellation.</param>
     /// <returns>The requested <see cref="Kernel"/> instance.</returns>
-    Kernel GetSync(string id, SemanticKernelOptions options, CancellationToken cancellationToken = default);
+    Kernel GetSync(string id, SemanticKernelOptions? options, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Removes a <see cref="Kernel"/> instance from the cache asynchronously.
