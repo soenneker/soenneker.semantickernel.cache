@@ -72,7 +72,7 @@ public class TestClass
         };
     }
 
-    public async ValueTask<string> GetKernelResponseAsync(string input, CancellationToken cancellationToken = default)
+    public async async ValueTask<string> GetKernelResponse(string input, CancellationToken cancellationToken = default)
     {
         // Retrieve (or create) the kernel instance using a key (here, nameof(TestClass)).
         Kernel kernel = await _semanticKernelCache.Get(nameof(TestClass), _options, cancellationToken);
@@ -91,7 +91,6 @@ public class TestClass
         return chatResult.ToString();
     }
 }
-
 ```
 
 ### Extending for Different Connectors/Plugins
