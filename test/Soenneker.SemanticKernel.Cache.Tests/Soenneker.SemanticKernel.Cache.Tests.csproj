@@ -27,7 +27,7 @@
         <PackageReference Include="Microsoft.SemanticKernel.Connectors.Ollama" Version="1.35.0-alpha" />
         <PackageReference Include="Soenneker.Facts.Local" Version="3.0.439" />
         <PackageReference Include="Soenneker.Utils.Test" Version="3.0.270" />
-        <PackageReference Include="Soenneker.Tests.FixturedUnit" Version="3.0.1660" />
+        <PackageReference Include="Soenneker.Tests.FixturedUnit" Version="3.0.1661" />
         <PackageReference Include="xUnit.v3" Version="1.1.0" />
     </ItemGroup>
 
