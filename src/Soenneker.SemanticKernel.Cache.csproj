@@ -49,7 +49,7 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.SemanticKernel" Version="1.38.0" />
-        <PackageReference Include="Soenneker.Extensions.Object" Version="3.0.3471" />
+        <PackageReference Include="Soenneker.Extensions.Object" Version="3.0.3473" />
         <PackageReference Include="Soenneker.Utils.SingletonDictionary" Version="3.0.952" />
     </ItemGroup>
 </Project>
