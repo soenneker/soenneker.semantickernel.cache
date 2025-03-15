@@ -17,6 +17,9 @@ public class SemanticKernelCacheTests : FixturedUnitTest
 {
     private readonly ISemanticKernelCache _util;
 
+    private const string _model = "gemma3:27b";
+    private const string _endpoint = "http://localhost:11434";
+
     public SemanticKernelCacheTests(Fixture fixture, ITestOutputHelper output) : base(fixture, output)
     {
         _util = Resolve<ISemanticKernelCache>(true);
@@ -32,8 +35,8 @@ public class SemanticKernelCacheTests : FixturedUnitTest
     {
         var options = new SemanticKernelOptions
         {
-            ModelId = "deepseek-r1:32b",
-            Endpoint = "http://localhost:11434",
+            ModelId = _model,
+            Endpoint = _endpoint,
             ApiKey = "",
             KernelFactory = (opts, ct) =>
             {
@@ -56,8 +59,8 @@ public class SemanticKernelCacheTests : FixturedUnitTest
     {
         var options = new SemanticKernelOptions
         {
-            ModelId = "deepseek-r1:32b",
-            Endpoint = "http://localhost:11434",
+            ModelId = _model,
+            Endpoint = _endpoint,
             ApiKey = "",
             KernelFactory = (opts, ct) =>
             {
@@ -96,8 +99,8 @@ public class SemanticKernelCacheTests : FixturedUnitTest
     {
         var options = new SemanticKernelOptions
         {
-            ModelId = "deepseek-r1:32b",
-            Endpoint = "http://localhost:11434",
+            ModelId = _model,
+            Endpoint = _endpoint,
             ApiKey = "",
             KernelFactory = (opts, ct) =>
             {
