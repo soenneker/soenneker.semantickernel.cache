@@ -28,7 +28,7 @@ public class SemanticKernelOptions
     /// <summary>
     /// Optional asynchronous delegate to further configure the kernel after creation.
     /// </summary>
-    public Func<Kernel, ValueTask>? ConfigureKernelAsync { get; set; }
+    public Func<Kernel, CancellationToken, ValueTask>? ConfigureKernel { get; set; }
 
     /// <summary>
     /// Optional delegate that creates a custom KernelBuilder.

@@ -5,7 +5,6 @@ using System;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
-using Soenneker.Extensions.Object;
 using Soenneker.Extensions.ValueTask;
 using Soenneker.SemanticKernel.Cache.Dtos;
 using Soenneker.Utils.SingletonDictionary;
@@ -30,7 +29,7 @@ public class SemanticKernelCache : ISemanticKernelCache
 
             Kernel kernel = await CreateKernelInternal(options, token).NoSync();
 
-            await ConfigureKernel(kernel, options).NoSync();
+            await ConfigureKernel(kernel, options, token).NoSync();
 
             _logger.LogDebug("Semantic Kernel instance ({ModelId}) has been initialized", options.ModelId);
 
@@ -62,10 +61,10 @@ public class SemanticKernelCache : ISemanticKernelCache
     /// <summary>
     /// Applies any additional asynchronous configuration on the kernel.
     /// </summary>
-    private static async ValueTask ConfigureKernel(Kernel kernel, SemanticKernelOptions options)
+    private static async ValueTask ConfigureKernel(Kernel kernel, SemanticKernelOptions options, CancellationToken cancellationToken)
     {
-        if (options.ConfigureKernelAsync != null)
-            await options.ConfigureKernelAsync(kernel).NoSync();
+        if (options.ConfigureKernel != null)
+            await options.ConfigureKernel(kernel, cancellationToken).NoSync();
     }
 
     public ValueTask<Kernel> Init(string id, SemanticKernelOptions options, CancellationToken cancellationToken = default)
