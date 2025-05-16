@@ -8,7 +8,7 @@
 
 ### Why?
 
-When using `Microsoft.SemanticKernel`, it's recommended to maintain long-lived kernel instances rather than re-creating them for each consumer or request. This avoids the overhead of reconfiguring connectors or plugins every time you need to perform a semantic operation. The `SemanticKernelCache` provides a thread-safe singleton cache per key via dependency injection. Kernel instances are created lazily using customizable options and disposed on application shutdown (or manually if needed).
+When using `Microsoft.SemanticKernel`, it's important to centralize and reuse kernel setup logic rather than repeating configuration for each consumer or request. This avoids the overhead of reinitializing connectors and plugins. `SemanticKernelCache` supports this by providing a thread-safe, per-key singleton cache that lazily creates `Kernel` instances using customizable options. Kernels are disposed at application shutdown or manually if needed.
 
 ## Installation
 
