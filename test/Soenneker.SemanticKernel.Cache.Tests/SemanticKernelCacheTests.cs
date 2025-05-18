@@ -4,10 +4,10 @@ using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Soenneker.Facts.Local;
 using Soenneker.SemanticKernel.Cache.Abstract;
-using Soenneker.SemanticKernel.Cache.Dtos;
 using Soenneker.Tests.FixturedUnit;
 using System;
 using System.Threading.Tasks;
+using Soenneker.SemanticKernel.Dtos.Options;
 using Xunit;
 
 namespace Soenneker.SemanticKernel.Cache.Tests;
