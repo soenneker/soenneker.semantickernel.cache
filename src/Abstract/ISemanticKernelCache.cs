@@ -1,8 +1,9 @@
 ﻿using Microsoft.SemanticKernel;
-using Soenneker.SemanticKernel.Cache.Dtos;
 using System.Threading.Tasks;
 using System.Threading;
 using System;
+using System.Collections.Generic;
+using Soenneker.SemanticKernel.Dtos.Options;
 
 namespace Soenneker.SemanticKernel.Cache.Abstract;
 
@@ -50,4 +51,8 @@ public interface ISemanticKernelCache : IAsyncDisposable, IDisposable
     /// </summary>
     /// <param name="id">The unique identifier of the kernel instance to remove.</param>
     void RemoveSync(string id);
+
+    ValueTask Clear();
+
+    ValueTask<Dictionary<string, Kernel>> GetAll();
 }

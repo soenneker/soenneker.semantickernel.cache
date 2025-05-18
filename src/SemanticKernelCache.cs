@@ -6,13 +6,14 @@ using System.Linq;
 using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
 using Soenneker.Extensions.ValueTask;
-using Soenneker.SemanticKernel.Cache.Dtos;
+using Soenneker.SemanticKernel.Dtos.Options;
 using Soenneker.Utils.SingletonDictionary;
+using System.Collections.Generic;
 
 namespace Soenneker.SemanticKernel.Cache;
 
 /// <inheritdoc cref="ISemanticKernelCache"/>
-public class SemanticKernelCache : ISemanticKernelCache
+public sealed class SemanticKernelCache : ISemanticKernelCache
 {
     private readonly ILogger<SemanticKernelCache> _logger;
     private readonly SingletonDictionary<Kernel> _kernels;
@@ -23,7 +24,7 @@ public class SemanticKernelCache : ISemanticKernelCache
         _kernels = new SingletonDictionary<Kernel>(async (id, token, args) =>
         {
             SemanticKernelOptions options = args.FirstOrDefault() as SemanticKernelOptions
-                                            ?? throw new ArgumentException("SemanticKernelOptions must be provided.");
+                                            ?? throw new ArgumentException($"{nameof(SemanticKernelOptions)} must be provided.");
 
             _logger.LogInformation("Creating a new Semantic Kernel instance for model ({ModelId})...", options.ModelId);
 
@@ -86,6 +87,17 @@ public class SemanticKernelCache : ISemanticKernelCache
     {
         _logger.LogInformation("Removing Semantic Kernel instance ({KernelId})", id);
         return _kernels.Remove(id);
+    }
+
+    public ValueTask Clear()
+    {
+        _logger.LogInformation("Clearing Semantic Kernel instances");
+        return _kernels.Clear();
+    }
+
+    public ValueTask<Dictionary<string, Kernel>> GetAll()
+    {
+        return _kernels.GetAll();
     }
 
     public void RemoveSync(string id)
