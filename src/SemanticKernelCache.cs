@@ -73,25 +73,25 @@ public sealed class SemanticKernelCache : ISemanticKernelCache
         return _kernels.Get(id, cancellationToken, options);
     }
 
-    public ValueTask<Kernel> Get(string id, SemanticKernelOptions? options, CancellationToken cancellationToken = default)
+    public ValueTask<Kernel> Get(string id, SemanticKernelOptions options, CancellationToken cancellationToken = default)
     {
-        return _kernels.Get(id, cancellationToken, options!);
+        return _kernels.Get(id, cancellationToken, options);
     }
 
-    public Kernel GetSync(string id, SemanticKernelOptions? options, CancellationToken cancellationToken = default)
+    public Kernel GetSync(string id, SemanticKernelOptions options, CancellationToken cancellationToken = default)
     {
-        return _kernels.GetSync(id, cancellationToken, options!);
+        return _kernels.GetSync(id, cancellationToken, options);
     }
 
     public ValueTask Remove(string id, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Removing Semantic Kernel instance ({KernelId})", id);
+        _logger.LogInformation("Removing Semantic Kernel instance ({id})...", id);
         return _kernels.Remove(id, cancellationToken);
     }
 
     public ValueTask Clear(CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Clearing Semantic Kernel instances");
+        _logger.LogInformation("Clearing Semantic Kernel instances...");
         return _kernels.Clear(cancellationToken);
     }
 
@@ -102,7 +102,7 @@ public sealed class SemanticKernelCache : ISemanticKernelCache
 
     public void RemoveSync(string id, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Removing Semantic Kernel instance ({KernelId}) synchronously...", id);
+        _logger.LogInformation("Removing Semantic Kernel instance ({id}) synchronously...", id);
         _kernels.RemoveSync(id, cancellationToken);
     }
 
