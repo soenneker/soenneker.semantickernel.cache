@@ -108,13 +108,11 @@ public sealed class SemanticKernelCache : ISemanticKernelCache
 
     public ValueTask DisposeAsync()
     {
-        GC.SuppressFinalize(this);
         return _kernels.DisposeAsync();
     }
 
     public void Dispose()
     {
-        GC.SuppressFinalize(this);
         _kernels.Dispose();
     }
 }
