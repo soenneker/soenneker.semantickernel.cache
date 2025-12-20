@@ -1,8 +1,6 @@
 ﻿using Soenneker.SemanticKernel.Cache.Abstract;
 using System.Threading.Tasks;
 using System.Threading;
-using System;
-using System.Linq;
 using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
 using Soenneker.Extensions.ValueTask;
@@ -16,16 +14,13 @@ namespace Soenneker.SemanticKernel.Cache;
 public sealed class SemanticKernelCache : ISemanticKernelCache
 {
     private readonly ILogger<SemanticKernelCache> _logger;
-    private readonly SingletonDictionary<Kernel> _kernels;
+    private readonly SingletonDictionary<Kernel, SemanticKernelOptions> _kernels;
 
     public SemanticKernelCache(ILogger<SemanticKernelCache> logger)
     {
         _logger = logger;
-        _kernels = new SingletonDictionary<Kernel>(async (id, token, args) =>
+        _kernels = new SingletonDictionary<Kernel, SemanticKernelOptions>(async (id, token, options) =>
         {
-            SemanticKernelOptions options = args.FirstOrDefault() as SemanticKernelOptions
-                                            ?? throw new ArgumentException($"{nameof(SemanticKernelOptions)} must be provided.");
-
             _logger.LogInformation("Creating a new Semantic Kernel instance for model ({ModelId})...", options.ModelId);
 
             Kernel kernel = await CreateKernelInternal(options, token).NoSync();
@@ -70,17 +65,17 @@ public sealed class SemanticKernelCache : ISemanticKernelCache
 
     public ValueTask<Kernel> Init(string id, SemanticKernelOptions options, CancellationToken cancellationToken = default)
     {
-        return _kernels.Get(id, cancellationToken, options);
+        return _kernels.Get(id, options, cancellationToken);
     }
 
     public ValueTask<Kernel> Get(string id, SemanticKernelOptions options, CancellationToken cancellationToken = default)
     {
-        return _kernels.Get(id, cancellationToken, options);
+        return _kernels.Get(id, options, cancellationToken);
     }
 
     public Kernel GetSync(string id, SemanticKernelOptions options, CancellationToken cancellationToken = default)
     {
-        return _kernels.GetSync(id, cancellationToken, options);
+        return _kernels.GetSync(id, options, cancellationToken);
     }
 
     public ValueTask Remove(string id, CancellationToken cancellationToken = default)
