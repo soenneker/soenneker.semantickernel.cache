@@ -19,18 +19,28 @@ public sealed class SemanticKernelCache : ISemanticKernelCache
     public SemanticKernelCache(ILogger<SemanticKernelCache> logger)
     {
         _logger = logger;
-        _kernels = new SingletonDictionary<Kernel, SemanticKernelOptions>(async (id, token, options) =>
+        _kernels = new SingletonDictionary<Kernel, SemanticKernelOptions>(CreateKernel);
+    }
+
+    private async ValueTask<Kernel> CreateKernel(string id, CancellationToken token, SemanticKernelOptions options)
+    {
+        if (options is null)
         {
-            _logger.LogInformation("Creating a new Semantic Kernel instance for model ({ModelId})...", options.ModelId);
+            _logger.LogWarning("Creating a new Semantic Kernel instance with null options for id ({Id})...", id);
+            Kernel nullOptionsKernel = await CreateKernelInternal(null, token).NoSync();
+            await ConfigureKernel(nullOptionsKernel, null, token).NoSync();
+            return nullOptionsKernel;
+        }
 
-            Kernel kernel = await CreateKernelInternal(options, token).NoSync();
+        _logger.LogInformation("Creating a new Semantic Kernel instance for model ({ModelId})...", options.ModelId);
 
-            await ConfigureKernel(kernel, options, token).NoSync();
+        Kernel kernel = await CreateKernelInternal(options, token).NoSync();
 
-            _logger.LogDebug("Semantic Kernel instance ({ModelId}) has been initialized", options.ModelId);
+        await ConfigureKernel(kernel, options, token).NoSync();
 
-            return kernel;
-        });
+        _logger.LogDebug("Semantic Kernel instance ({ModelId}) has been initialized", options.ModelId);
+
+        return kernel;
     }
 
     /// <summary>
@@ -38,18 +48,18 @@ public sealed class SemanticKernelCache : ISemanticKernelCache
     /// Always calls the KernelFactory delegate (if provided) to obtain an IKernelBuilder,
     /// applies any additional configuration via ConfigureBuilder, and then calls Build().
     /// </summary>
-    private static async ValueTask<Kernel> CreateKernelInternal(SemanticKernelOptions options, CancellationToken cancellationToken)
+    private static async ValueTask<Kernel> CreateKernelInternal(SemanticKernelOptions? options, CancellationToken cancellationToken)
     {
         IKernelBuilder builder;
 
         // Always call the KernelFactory if provided; otherwise, create a default builder.
-        if (options.KernelFactory != null)
+        if (options?.KernelFactory != null)
             builder = await options.KernelFactory(options, cancellationToken).NoSync();
         else
             builder = Kernel.CreateBuilder();
 
         // Optionally apply additional builder configuration.
-        options.ConfigureBuilder?.Invoke(builder);
+        options?.ConfigureBuilder?.Invoke(builder);
 
         return builder.Build();
     }
@@ -57,9 +67,9 @@ public sealed class SemanticKernelCache : ISemanticKernelCache
     /// <summary>
     /// Applies any additional asynchronous configuration on the kernel.
     /// </summary>
-    private static async ValueTask ConfigureKernel(Kernel kernel, SemanticKernelOptions options, CancellationToken cancellationToken)
+    private static async ValueTask ConfigureKernel(Kernel kernel, SemanticKernelOptions? options, CancellationToken cancellationToken)
     {
-        if (options.ConfigureKernel != null)
+        if (options?.ConfigureKernel != null)
             await options.ConfigureKernel(kernel, cancellationToken).NoSync();
     }
 
