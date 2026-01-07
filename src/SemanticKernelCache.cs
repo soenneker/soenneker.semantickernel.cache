@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
 using Soenneker.Extensions.ValueTask;
 using Soenneker.SemanticKernel.Dtos.Options;
-using Soenneker.Utils.SingletonDictionary;
+using Soenneker.Dictionaries.Singletons;
 using System.Collections.Generic;
 
 namespace Soenneker.SemanticKernel.Cache;
@@ -22,7 +22,7 @@ public sealed class SemanticKernelCache : ISemanticKernelCache
         _kernels = new SingletonDictionary<Kernel, SemanticKernelOptions>(CreateKernel);
     }
 
-    private async ValueTask<Kernel> CreateKernel(string id, CancellationToken token, SemanticKernelOptions options)
+    private async ValueTask<Kernel> CreateKernel(string id, SemanticKernelOptions options, CancellationToken token)
     {
         if (options is null)
         {
