@@ -88,7 +88,7 @@ public sealed class SemanticKernelCache : ISemanticKernelCache
         return _kernels.GetSync(id, options, cancellationToken);
     }
 
-    public ValueTask Remove(string id, CancellationToken cancellationToken = default)
+    public ValueTask<bool> Remove(string id, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Removing Semantic Kernel instance ({id})...", id);
         return _kernels.Remove(id, cancellationToken);

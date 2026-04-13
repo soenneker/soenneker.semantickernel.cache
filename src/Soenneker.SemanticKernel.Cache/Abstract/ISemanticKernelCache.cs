@@ -45,7 +45,7 @@ public interface ISemanticKernelCache : IAsyncDisposable, IDisposable
     /// <param name="id">The unique identifier of the kernel instance to remove.</param>
     /// <param name="cancellationToken"></param>
     /// <returns>A <see cref="ValueTask"/> representing the asynchronous removal operation.</returns>
-    ValueTask Remove(string id, CancellationToken cancellationToken = default);
+    ValueTask<bool> Remove(string id, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Removes a <see cref="Kernel"/> instance from the cache synchronously.
