@@ -1,36 +1,35 @@
-﻿using AwesomeAssertions;
+using AwesomeAssertions;
 using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
-using Soenneker.Facts.Local;
+using Soenneker.Tests.Attributes.Local;
 using Soenneker.SemanticKernel.Cache.Abstract;
-using Soenneker.Tests.FixturedUnit;
+using Soenneker.Tests.HostedUnit;
 using System;
 using System.Threading.Tasks;
 using Soenneker.SemanticKernel.Dtos.Options;
-using Xunit;
 
 namespace Soenneker.SemanticKernel.Cache.Tests;
 
-[Collection("Collection")]
-public class SemanticKernelCacheTests : FixturedUnitTest
+[ClassDataSource<Host>(Shared = SharedType.PerTestSession)]
+public class SemanticKernelCacheTests : HostedUnitTest
 {
     private readonly ISemanticKernelCache _util;
 
     private const string _model = "gemma3:27b";
     private const string _endpoint = "http://localhost:11434";
 
-    public SemanticKernelCacheTests(Fixture fixture, ITestOutputHelper output) : base(fixture, output)
+    public SemanticKernelCacheTests(Host host) : base(host)
     {
         _util = Resolve<ISemanticKernelCache>(true);
     }
 
-    [Fact]
+    [Test]
     public void Default()
     {
     }
 
-    [LocalFact]
+    [LocalOnly]
     public async ValueTask Get_should_retrieve_kernel()
     {
         var options = new SemanticKernelOptions
@@ -54,7 +53,7 @@ public class SemanticKernelCacheTests : FixturedUnitTest
         kernel.Should().NotBeNull();
     }
 
-    [LocalFact]
+    [LocalOnly]
     public async ValueTask Chat_should_function()
     {
         var options = new SemanticKernelOptions
@@ -94,7 +93,7 @@ public class SemanticKernelCacheTests : FixturedUnitTest
         result.Should().NotBeNull();
     }
 
-    [LocalFact]
+    [LocalOnly]
     public async ValueTask Init_with_null_options_on_Get_should_return_kernel()
     {
         var options = new SemanticKernelOptions
