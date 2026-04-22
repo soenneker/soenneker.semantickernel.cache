@@ -27,10 +27,5 @@
     <ItemGroup>
         <ProjectReference Include="..\..\src\Soenneker.SemanticKernel.Cache\Soenneker.SemanticKernel.Cache.csproj" />
     </ItemGroup>
-
-    <ItemGroup>
-        <Content Include="testconfig.json">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-    </ItemGroup>
 </Project>
+
