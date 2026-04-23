@@ -48,7 +48,7 @@ public class SemanticKernelCacheTests : HostedUnitTest
             }
         };
 
-        Kernel kernel = await _util.Get("localOllamaChatTest", options, CancellationToken);
+        Kernel kernel = await _util.Get("localOllamaChatTest", options, System.Threading.CancellationToken.None);
 
         kernel.Should().NotBeNull();
     }
@@ -72,7 +72,7 @@ public class SemanticKernelCacheTests : HostedUnitTest
             }
         };
 
-        Kernel kernel = await _util.Get("localOllamaChatTest", options, CancellationToken);
+        Kernel kernel = await _util.Get("localOllamaChatTest", options, System.Threading.CancellationToken.None);
 
         var chatCompletionService = kernel.GetRequiredService<IChatCompletionService>();
 
@@ -112,9 +112,9 @@ public class SemanticKernelCacheTests : HostedUnitTest
             }
         };
 
-        Kernel kernel1 = await _util.Init("localOllamaChatTest", options, CancellationToken);
+        Kernel kernel1 = await _util.Init("localOllamaChatTest", options, System.Threading.CancellationToken.None);
 
-        Kernel kernel2 = await _util.Get("localOllamaChatTest", null, CancellationToken);
+        Kernel kernel2 = await _util.Get("localOllamaChatTest", null, System.Threading.CancellationToken.None);
 
         kernel1.Should().NotBeNull();
         kernel2.Should().NotBeNull();
