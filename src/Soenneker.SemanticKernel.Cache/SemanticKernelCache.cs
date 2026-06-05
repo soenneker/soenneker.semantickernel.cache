@@ -111,11 +111,18 @@ public sealed class SemanticKernelCache : ISemanticKernelCache
         _kernels.RemoveSync(id, cancellationToken);
     }
 
+    /// <summary>
+    /// Asynchronously releases resources used by the current instance.
+    /// </summary>
+    /// <returns>A task that represents the asynchronous operation.</returns>
     public ValueTask DisposeAsync()
     {
         return _kernels.DisposeAsync();
     }
 
+    /// <summary>
+    /// Releases resources used by the current instance.
+    /// </summary>
     public void Dispose()
     {
         _kernels.Dispose();
