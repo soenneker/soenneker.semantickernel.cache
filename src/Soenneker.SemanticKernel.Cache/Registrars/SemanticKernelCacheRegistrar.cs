@@ -12,6 +12,8 @@ public static class SemanticKernelCacheRegistrar
     /// <summary>
     /// Adds <see cref="ISemanticKernelCache"/> as a singleton service. <para/>
     /// </summary>
+    /// <param name="services">Service collection that receives the registration.</param>
+    /// <returns>The same service collection, so additional registrations can be chained.</returns>
     public static IServiceCollection AddSemanticKernelCacheAsSingleton(this IServiceCollection services)
     {
         services.TryAddSingleton<ISemanticKernelCache, SemanticKernelCache>();
@@ -22,6 +24,8 @@ public static class SemanticKernelCacheRegistrar
     /// <summary>
     /// Adds <see cref="ISemanticKernelCache"/> as a scoped service. <para/>
     /// </summary>
+    /// <param name="services">Service collection that receives the registration.</param>
+    /// <returns>The same service collection, so additional registrations can be chained.</returns>
     public static IServiceCollection AddSemanticKernelCacheAsScoped(this IServiceCollection services)
     {
         services.TryAddScoped<ISemanticKernelCache, SemanticKernelCache>();

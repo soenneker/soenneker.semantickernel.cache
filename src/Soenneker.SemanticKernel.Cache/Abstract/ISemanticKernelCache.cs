@@ -55,16 +55,16 @@ public interface ISemanticKernelCache : IAsyncDisposable, IDisposable
     void RemoveSync(string id, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Executes the clear operation.
+    /// Removes all entries managed by the Semantic Kernel Cache.
     /// </summary>
-    /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>A task that represents the asynchronous operation.</returns>
+    /// <param name="cancellationToken">Token used to cancel the operation.</param>
+    /// <returns>A task that completes when the Semantic Kernel Cache has been cleared.</returns>
     ValueTask Clear(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Gets all.
     /// </summary>
-    /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>A task containing the result of the operation.</returns>
+    /// <param name="cancellationToken">Token used to cancel the operation.</param>
+    /// <returns>A task whose result is the requested dictionary.</returns>
     ValueTask<Dictionary<string, Kernel>> GetAll(CancellationToken cancellationToken = default);
 }
