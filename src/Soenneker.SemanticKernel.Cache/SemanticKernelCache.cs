@@ -10,7 +10,6 @@ using System.Collections.Generic;
 
 namespace Soenneker.SemanticKernel.Cache;
 
-/// <inheritdoc cref="ISemanticKernelCache"/>
 public sealed class SemanticKernelCache : ISemanticKernelCache
 {
     private readonly ILogger<SemanticKernelCache> _logger;

@@ -3,121 +3,73 @@
 [![](https://img.shields.io/nuget/dt/Soenneker.SemanticKernel.Cache.svg?style=for-the-badge)](https://www.nuget.org/packages/Soenneker.SemanticKernel.Cache/)
 [![](https://img.shields.io/github/actions/workflow/status/soenneker/soenneker.semantickernel.cache/codeql.yml?label=CodeQL&style=for-the-badge)](https://github.com/soenneker/soenneker.semantickernel.cache/actions/workflows/codeql.yml)
 
-# ![](https://user-images.githubusercontent.com/4441470/224455560-91ed3ee7-f510-4041-a8d2-3fc093025112.png) Soenneker.SemanticKernel.Cache
+# Soenneker.SemanticKernel.Cache
 
-### Providing async thread-safe singleton Semantic Kernel instances
-
-### Why?
-
-When using `Microsoft.SemanticKernel`, it's important to centralize and reuse kernel setup logic rather than repeating configuration for each consumer or request. This avoids the overhead of reinitializing connectors and plugins. `SemanticKernelCache` supports this by providing a thread-safe, per-key singleton cache that lazily creates `Kernel` instances using customizable options. Kernels are disposed at application shutdown or manually if needed.
+A concurrent, keyed cache that creates and reuses Microsoft Semantic Kernel `Kernel` instances.
 
 ## Installation
-
-Install the package via the .NET CLI:
 
 ```bash
 dotnet add package Soenneker.SemanticKernel.Cache
 ```
 
-## Usage
-
-### 1. Register the Cache in Dependency Injection
-
-In your `Program.cs` (or equivalent startup file), register the cache with the DI container:
+## Registration
 
 ```csharp
-using Soenneker.SemanticKernel.Cache;
+using Soenneker.SemanticKernel.Cache.Registrars;
 
-public static async Task Main(string[] args)
-{
-    var builder = WebApplication.CreateBuilder(args);
-
-    // Register SemanticKernelCache as a singleton service.
-    builder.Services.AddSemanticKernelCacheAsSingleton();
-
-    // Other configuration...
-}
+services.AddSemanticKernelCacheAsSingleton();
 ```
 
-### 2. Inject and Retrieve a Kernel Instance
+Singleton registration shares kernels across the application. `AddSemanticKernelCacheAsScoped()` instead creates an independent cache per DI scope and clears it when that scope is disposed.
 
-Inject `ISemanticKernelCache` into your classes and retrieve a Microsoft.SemanticKernel.Kernel instance by providing the required options.
+## Creating a kernel
 
 ```csharp
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.SemanticKernel;
-using Microsoft.SemanticKernel.Chat;
-using Soenneker.SemanticKernel.Cache;
+using Soenneker.SemanticKernel.Cache.Abstract;
+using Soenneker.SemanticKernel.Dtos.Options;
 
-public class TestClass
+var options = new SemanticKernelOptions
 {
-    private readonly ISemanticKernelCache _semanticKernelCache;
-    private readonly SemanticKernelOptions _options;
-
-    public TestClass(ISemanticKernelCache semanticKernelCache)
+    ModelId = "chat-model",
+    Endpoint = "https://model.example.com",
+    ApiKey = configuration["Models:ApiKey"],
+    KernelFactory = static (options, cancellationToken) =>
     {
-        _semanticKernelCache = semanticKernelCache;
-        
-        // Create the options object once. Replace these with your actual values.
-        var options = new SemanticKernelOptions
-        {
-            ModelId = "deepseek-r1:32b",
-            Endpoint = "http://localhost:11434",
-            KernelFactory = (opts, ct) =>
-            {
-                IKernelBuilder builder = Kernel.CreateBuilder().AddOllamaChatCompletion(opts.ModelId, new Uri(opts.Endpoint));
+        IKernelBuilder builder = Kernel.CreateBuilder();
 
-                return ValueTask.FromResult(builder);
-            }
-        };
-    }
+        // Add the connector required by your application to builder here.
 
-    public async async ValueTask<string> GetKernelResponse(string input, CancellationToken cancellationToken = default)
-    {
-        // Retrieve (or create) the kernel instance using a key (here, nameof(TestClass)).
-        Kernel kernel = await _semanticKernelCache.Get(nameof(TestClass), _options, cancellationToken);
-
-        // Retrieve the chat completion service from the kernel.
-        var chatCompletionService = kernel.GetRequiredService<IChatCompletionService>();
-
-        // Create a chat history and add the user's message.
-        var history = new ChatHistory();
-        history.AddUserMessage(input);
-
-        // Request a chat completion using the chat service.
-        var chatResult = await chatCompletionService.GetChatMessageContentAsync(history, kernel: kernel);
-
-        // Return the chat result (or process it further as needed).
-        return chatResult.ToString();
-    }
-}
-```
-
-### Extending for Different Connectors/Plugins
-
-The `SemanticKernelOptions` class includes an optional `KernelFactory` delegate. This allows you to override the default behavior (which uses the Azure Text Completion service) and create the kernel using a different connector or plugin. For example:
-
-```csharp
-var openAiOptions = new SemanticKernelOptions
-{
-    ModelId = "openai-model-id",
-    Endpoint = "https://api.openai.com/v1/",
-    ApiKey = "your-openai-api-key",
-    KernelFactory = (opts, ct) =>
-    {
-        Kernel kernel = new KernelBuilder().AddOpenAITextCompletionService(opts.ModelId, opts.Endpoint, opts.ApiKey);
-
-        return ValueTask.FromResult(kernel);
+        return ValueTask.FromResult(builder);
     },
-    ConfigureKernelAsync = async kernel =>
+    ConfigureBuilder = builder =>
     {
-        // Optionally, import skills or perform additional configuration.
+        // Register plugins or services before Build(), if needed.
+    },
+    ConfigureKernel = async (kernel, cancellationToken) =>
+    {
+        // Perform asynchronous post-build configuration, if needed.
         await ValueTask.CompletedTask;
     }
 };
 
-Kernel openAiKernel = await semanticKernelCache.Get("openaiKernel", openAiOptions);
+Kernel kernel = await cache.Get("primary-chat", options, cancellationToken);
 ```
 
-This design makes it straightforward to support multiple types of Semantic Kernel configurations using the same caching mechanism.
+`KernelFactory` produces the builder. `ConfigureBuilder` runs before `Build()`, and `ConfigureKernel` runs after the kernel is built. If no factory is supplied, the cache builds an empty `Kernel.CreateBuilder()`; connector-specific options such as `ModelId`, `Endpoint`, and `ApiKey` are not applied automatically.
+
+## Key behavior
+
+The ID is the cache identity. Concurrent requests for the same ID share one initialization, and subsequent calls return that kernel. The options passed during the first successful creation win; later options for the same ID do not reconfigure the existing kernel. Use distinct IDs for distinct configurations.
+
+```csharp
+Kernel sameKernel = await cache.Get("primary-chat", options, cancellationToken);
+
+bool removed = await cache.Remove("primary-chat", cancellationToken);
+Kernel rebuilt = await cache.Get("primary-chat", replacementOptions, cancellationToken);
+```
+
+`Init` and `Get` both initialize on first access and return the cached instance. `GetSync` blocks while performing the same operation; prefer the asynchronous API when a factory or post-build configuration can perform asynchronous work.
+
+`Remove`, `Clear`, and cache disposal remove and dispose cached kernels through the underlying singleton dictionary. Do not continue using a kernel after its key has been removed or its cache has been disposed. `GetAll` returns the initialized kernels as a dictionary snapshot for inspection; it does not initialize missing keys.

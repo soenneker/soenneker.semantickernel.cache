@@ -8,12 +8,12 @@ using Soenneker.SemanticKernel.Dtos.Options;
 namespace Soenneker.SemanticKernel.Cache.Abstract;
 
 /// <summary>
-/// Providing async thread-safe singleton Semantic Kernel instances
+/// Provides concurrent, keyed creation and reuse of Semantic Kernel instances.
 /// </summary>
 public interface ISemanticKernelCache : IAsyncDisposable, IDisposable
 {
     /// <summary>
-    /// Retrieves a <see cref="Kernel"/> instance asynchronously, creating it if necessary.
+    /// Gets a <see cref="Kernel"/> by ID, creating and configuring it on first access.
     /// </summary>
     /// <param name="id">The unique identifier of the kernel instance.</param>
     /// <param name="options">The options used to configure the kernel instance.</param>
@@ -22,7 +22,7 @@ public interface ISemanticKernelCache : IAsyncDisposable, IDisposable
     ValueTask<Kernel> Init(string id, SemanticKernelOptions options, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Retrieves a <see cref="Kernel"/> instance asynchronously, creating it if necessary.
+    /// Gets a <see cref="Kernel"/> by ID, creating and configuring it on first access.
     /// </summary>
     /// <param name="id">The unique identifier of the kernel instance.</param>
     /// <param name="options">The options used to configure the kernel instance.</param>
@@ -62,9 +62,9 @@ public interface ISemanticKernelCache : IAsyncDisposable, IDisposable
     ValueTask Clear(CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Gets all.
+    /// Gets a snapshot of all initialized kernels keyed by ID.
     /// </summary>
     /// <param name="cancellationToken">Token used to cancel the operation.</param>
-    /// <returns>A task whose result is the requested dictionary.</returns>
+    /// <returns>A dictionary snapshot of initialized kernels.</returns>
     ValueTask<Dictionary<string, Kernel>> GetAll(CancellationToken cancellationToken = default);
 }
