@@ -53,6 +53,6 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.SemanticKernel" Version="1.81.0" />
         <PackageReference Include="Soenneker.SemanticKernel.Dtos.Options" Version="11.0.136" />
-        <PackageReference Include="Soenneker.Dictionaries.Singletons" Version="4.0.129" />
+        <PackageReference Include="Soenneker.Dictionaries.Singletons" Version="11.0.130" />
     </ItemGroup>
 </Project>
